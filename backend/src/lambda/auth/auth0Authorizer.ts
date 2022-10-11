@@ -1,4 +1,4 @@
-import { CustomAuthorizerEvent, CustomAuthorizerResult } from 'aws-lambda'
+import { CustomAuthorizerEvent , CustomAuthorizerResult } from 'aws-lambda'
 import 'source-map-support/register'
 
 import { verify, decode } from 'jsonwebtoken'
@@ -61,7 +61,22 @@ async function verifyToken(authHeader: string): Promise<JwtPayload> {
   // TODO: Implement token verification
   // You should implement it similarly to how it was implemented for the exercise for the lesson 5
   // You can read more about how to do this here: https://auth0.com/blog/navigating-rs256-and-jwks/
-  return undefined
+  const kid = jwt.header.kid;
+  let certificate;
+  try {
+    const response = await Axios.get(jwksUrl);
+    const signingKey = response.data.keys.find(k => k.kid === kid);
+
+    if (!signingKey) {
+      throw new Error("No signing key was found");
+    }
+
+    certificate = `-----BEGIN CERTIFICATE-----\n${signingKey.x5c[0]}\n-----END CERTIFICATE-----`;
+  } catch (e) {
+    logger.error("Could not retrieve certificate", { error: e.message })
+  }
+  logger.info("Token has been verified")
+  return verify(token, certificate, { algorithms: ["RS256"] }) as JwtPayload;
 }
 
 function getToken(authHeader: string): string {

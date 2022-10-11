@@ -1,50 +1,31 @@
-import { TodosAccess } from './todosAcess'
-import { AttachmentUtils } from './attachmentUtils';
-import { TodoItem } from '../models/TodoItem'
-import { CreateTodoRequest } from '../requests/CreateTodoRequest'
-import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
-import { createLogger } from '../utils/logger'
-import * as uuid from 'uuid'
-import * as createError from 'http-errors'
-import {parseUserId} from "../auth/utils"
+import { TodoItem } from "../models/TodoItem";
+import { UpdateTodoRequest } from "../requests/UpdateTodoRequest";
+import { CreateTodoRequest } from "../requests/CreateTodoRequest";
+import { TodoAccess } from "../dataLayer/todosAcess";
+const todoAccess = new TodoAccess();
 
-// TODO: Implement businessLogic
-//const uuidv4 = require('uuid/v4')
-const toDosAccess = new TodosAccess();
-
-export async function getTodosForUser(jwtToken:string): Promise<TodoItem[]>{
-    const userId = parseUserId(jwtToken);
-    return toDosAccess.getTodosForUser(userId);
+export const deleteTodo = async (userId: string, todoId: string) => {
+    await todoAccess.deleteTodo(userId, todoId);
 }
 
-export function createTodo(createTodoRequest:CreateTodoRequest, jwtToken:string): Promise<TodoItem[]>{
-    const userId = parseUserId(jwtToken);
-    const todoId = uuid.v4();
-    const s3BucketName = process.env.ATTACHMENT_S3_BUCKET
-
-    return TodosAccess.createToDo({
-        userId: userId,
-        todoId: todoId,
-        attachmentUrl: `https://${s3BucketName}.s3.amazonaws.com/${todoId}`,
-        createdAt: new Date().getTime().toString,
-        done: false,
-        ...createTodoRequest,
-    });
-}
-export function updateTodo(updateTodoRequest:UpdateTodoRequest, todoId:string, jwtToken:string): Promise<TodoItem[]>{
-    const userId = parseUserId(jwtToken);
-    return toDosAccess.updateTodo(updateTodoRequest, todoId, userId);  
-}
-export function deleteTodo(todoId:string, jwtToken:string): Promise<string>{
-    const userId = parseUserId(jwtToken);
-    return toDosAccess.deleteTodo(todoId, userId);  
-}
-export function createAttachmentPresignedUrl(todoId:string): Promise<string>{
-    return toDosAccess.createAttachmentPresignedUrl(todoId);  
+export const getTodosForUser = async (userId: string): Promise<TodoItem[]> => {
+    const todos = await todoAccess.getUserTodos(userId);
+    return todos;
 }
 
+export const createTodo = async (data: CreateTodoRequest, userId: string): Promise<TodoItem> => {
+    const todoItem = await todoAccess.createTodo(data, userId);
+    return todoItem;
+}
 
+export const updateTodo = async (data: UpdateTodoRequest, userId: string, todoId: string) => {
+    await todoAccess.updateTodo(data, userId, todoId);
+}
 
+export const createAttachmentPresignedUrl = async (userId: string, todoId: string) => {
+    const uploadUrl = todoAccess.createAttachment(userId, todoId);
+    return uploadUrl;
+}
 
 
 
