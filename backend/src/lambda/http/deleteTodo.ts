@@ -19,6 +19,10 @@ export const handler = middy(
     id: ${todoId}`)
     return {
       statusCode: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true
+      },
       body: JSON.stringify({
         del
       })

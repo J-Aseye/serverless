@@ -13,7 +13,7 @@ async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> =>{
     console.log("Processing Event ", event);
     const todoId = event.pathParameters.todoid;
     const userId = getUserId(event)
-    const URL = await createAttachmentPresignedUrl(userId,todoId);
+    const uploadURL = await createAttachmentPresignedUrl(userId,todoId);
      
     return{
       statusCode: 202,
@@ -22,7 +22,7 @@ async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> =>{
         "Access-Control-Allow-Credentials": true
       },
       body: JSON.stringify({
-         URL
+         uploadURL
       })
     }
   }

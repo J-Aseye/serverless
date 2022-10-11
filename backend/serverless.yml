@@ -30,6 +30,12 @@ provider:
     TODOS_CREATED_AT_INDEX: CreatedAtIndex
     ATTACHMENT_S3_BUCKET: todomeee-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
+
+  httpApi:
+    authorizers:
+      customAuthorizer:
+        type: request
+        functionName: Auth
   
   custom:
     documentation:
@@ -67,9 +73,9 @@ provider:
               done:
                 type: boolean
 
-  logs:
+  #logs:
     # Enable API Gateway logs
-    restApi: true
+    #restApi: true
 
  # iam:
   #  role:
@@ -124,9 +130,11 @@ functions:
           documentation: 
             summary: "Create a new todo item"
             description: "Create a new todo item"
-            requestModels:
-              "application/json": CreateTodoRequest
-          reqValidatorName: RequestBodyValidator
+          request:
+            schemas:
+              application/json:
+                schema: ${file(models/create-todo-model.json)}
+         # reqValidatorName: RequestBodyValidator
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-to-do-role-todo-${self:provider.stage}     
     iamRoleStatements:
         - Effect: Allow
@@ -153,9 +161,11 @@ functions:
           documentation: 
             summary: "Update a todo item"
             description: "Update a todo item"
-            requestModels:
-              "application/json": UpdateTodoRequest
-          reqValidatorName: RequestBodyValidator
+          request:
+            schemas:
+              application/json:
+                schema: ${file(models/update-todo-model.json)}
+         # reqValidatorName: RequestBodyValidator
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-to-do-role-todo-${self:provider.stage}     
     iamRoleStatements:
         - Effect: Allow
@@ -214,32 +224,7 @@ functions:
 
 resources:
   Resources:
-    # Add necessary AWS resources. You will need at least the following AWS resources
-    # TODO: Fill the properties
-    # Feel free to change the names as you like. 
-    GatewayResponseDefault4XX:
-      Type: AWS::ApiGateway::GatewayResponse
-      Properties:
-        ResponseParameters: 
-          getewayresponse.header.Access-Control_Allow_Origin: "'*'"
-          getewayresponse.header.Access-Control_Allow_Headers: "'*'"
-          getewayresponse.header.Access-Control_Allow_Methods: "'*'"
-        ResponseType: DEFAULT_4XX
-        RestApiId: 
-          Ref: ApiGatewayRestApi
-
-    GatewayResponseDefault5XX:
-      Type: AWS::ApiGateway::GatewayResponse
-      Properties:
-        ResponseParameters: 
-          getewayresponse.header.Access-Control_Allow_Origin: "'*'"
-          getewayresponse.header.Access-Control_Allow_Headers: "'*'"
-          getewayresponse.header.Access-Control_Allow_Methods: "'*'"
-        ResponseType: DEFAULT_5XX
-        RestApiId: 
-          Ref: ApiGatewayRestApi
-    
-    # TODO: Create a DynamoDB table with local secondary index and a composite key
+     # TODO: Create a DynamoDB table with local secondary index and a composite key
     TodosTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -266,17 +251,7 @@ resources:
           KeyType: RANGE
         Projection:
           ProjectionType: ALL
-    onlyBody:
-      Type: "AWS::ApiGateway::RequestValidator"
-      Properties:
-        Name: 'only-body'
-        RestApiId:
-          Ref: ApiGatewayRestApi
-        ValidateRequestBody: true
-        ValidateRequestParameters: false
-      
-
-
+    
     # TODO: Complete the bucket properties below. 
     # Do not forget to add the CorsConfiguration propoerty
     AttachmentsBucket:
@@ -296,6 +271,30 @@ resources:
                  - DELETE
                  - HEAD
               MaxAge: 3000
+    # Add necessary AWS resources. You will need at least the following AWS resources
+    # TODO: Fill the properties
+    # Feel free to change the names as you like. 
+    GatewayResponseDefault4XX:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters: 
+          getewayresponse.header.Access-Control_Allow_Origin: "'*'"
+          getewayresponse.header.Access-Control_Allow_Headers: "'*'"
+          getewayresponse.header.Access-Control_Allow_Methods: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId: 
+          Ref: ApiGatewayRestApi
+
+    GatewayResponseDefault5XX:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters: 
+          getewayresponse.header.Access-Control_Allow_Origin: "'*'"
+          getewayresponse.header.Access-Control_Allow_Headers: "'*'"
+          getewayresponse.header.Access-Control_Allow_Methods: "'*'"
+        ResponseType: DEFAULT_5XX
+        RestApiId: 
+          Ref: ApiGatewayRestApi
 
     # TODO: Complete the policy below and attach it to the bucket defined above
     # For cross referencing the name of the bucket, use "!Ref AttachmentsBucket"
@@ -312,3 +311,12 @@ resources:
               Action: 's3:GetObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*'
           Bucket: !Ref AttachmentsBucket
+    
+     RequestBodyValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'request-body-validator'
+        RestApiId: 
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
