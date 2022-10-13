@@ -1,7 +1,7 @@
 import { TodoItem } from "../models/TodoItem";
 import { UpdateTodoRequest } from "../requests/UpdateTodoRequest";
 import { CreateTodoRequest } from "../requests/CreateTodoRequest";
-import { TodoAccess } from "../dataLayer/todosAcess";
+import { TodoAccess } from "../dataLayer/todoAccess";
 const todoAccess = new TodoAccess();
 
 export const deleteTodo = async (userId: string, todoId: string) => {

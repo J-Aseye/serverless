@@ -14,6 +14,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   #lambdaHashingVersion: '20201221'
+  memorySize: 3008
 
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
@@ -26,9 +27,9 @@ provider:
   # ${self:provider.environment.ATTACHMENT_S3_BUCKET}
   environment:
     PROJECT_NAME: todo
-    TODOS_TABLE: todo-${self:provider.stage}
+    TODOS_TABLE: todos-${self:provider.stage}
     TODOS_CREATED_AT_INDEX: CreatedAtIndex
-    ATTACHMENT_S3_BUCKET: todomeee-${self:provider.stage}
+    ATTACHMENT_S3_BUCKET: todo-for-serverless-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
 
   httpApi:
@@ -37,41 +38,44 @@ provider:
         type: request
         functionName: Auth
   
-  custom:
-    documentation:
-      api:
-        info:
-          version: v1.0.0
-          title: todo-api
-          description: Serverless application for todo application
-      models:
-        - name: CreateTodoRequest
-          contentType: "application/json"
-          schema: 
-            required: 
-              - name: 
-              - dueDate: 
-            properties: 
-              name: 
-                minLength: 1
-                type: string
-              dueDate: 
-                type: string
-        - name: UpdateTodoRequest
-          contentType: "application/json"
-          schema: 
-            required: 
-              - name: 
-              - dueDate: 
-              - done:
-            properties: 
-              name: 
-                minLength: 1
-                type: string
-              dueDate: 
-                type: string
-              done:
-                type: boolean
+custom:
+  documentation:
+    api:
+      info:
+        version: '1.0.0'
+        title: todo-api
+        description: Serverless application for todo application
+    models:
+      - name: CreateTodoRequest
+        contentType: "application/json"
+        schema: 
+          required:
+            - name
+            - dueDate
+          properties:
+            name:
+              minLength: 1
+              type: string
+            dueDate:
+              type: string
+      - name: UpdateTodoRequest
+        contentType: "application/json"
+        schema:
+          required:
+            - name
+            - dueDate
+            - done
+          properties:
+            name:
+              minLength: 1
+              type: string
+            dueDate:
+              type: string
+            done:
+              type: boolean
+
+package:
+  individually: true
 
   #logs:
     # Enable API Gateway logs
@@ -88,7 +92,6 @@ provider:
 
 
 functions:
-
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
 
@@ -101,19 +104,15 @@ functions:
           method: get
           path: todos
           cors: true
-          authorizer: Auth
-    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-get-to-do-role-todo-${self:provider.stage}     
+          authorizer: 
+            name: Auth
+          reqValidatorName: RequestBodyValidator
     iamRoleStatements:
         - Effect: Allow
           Action:
             - dynamodb:Query
           Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-        - Effect: Allow
-          Action:
-            - xray:PutTelemetryRecords
-            - xray:PutTraceSegments
-          Resources: 
-            - '*'
+
 
   # TODO: Configure this function - 
   # Provide iamRoleStatements property. Decide the Actions and AWS Resource. 
@@ -127,26 +126,18 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
-          documentation: 
-            summary: "Create a new todo item"
-            description: "Create a new todo item"
           request:
             schemas:
               application/json:
                 schema: ${file(models/create-todo-model.json)}
-         # reqValidatorName: RequestBodyValidator
-    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-to-do-role-todo-${self:provider.stage}     
+                name: CreateToDo
+                description: 'Create ToDo Validation'
+          reqValidatorName: RequestBodyValidator 
     iamRoleStatements:
         - Effect: Allow
           Action:
             - dynamodb:PutItem
           Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-        - Effect: Allow
-          Action:
-            - xray:PutTelemetryRecords
-            - xray:PutTraceSegments
-          Resources: 
-            - '*'
 
   # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements, and request schemas
@@ -157,28 +148,21 @@ functions:
           method: patch
           path: todos/{todoId}
           cors: true
-          authorizer: Auth
-          documentation: 
-            summary: "Update a todo item"
-            description: "Update a todo item"
+          authorizer: 
+            name: Auth
           request:
             schemas:
               application/json:
                 schema: ${file(models/update-todo-model.json)}
-         # reqValidatorName: RequestBodyValidator
-    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-to-do-role-todo-${self:provider.stage}     
+                name: UpdateRequest
+                description: 'Update ToDo Validation'
+          reqValidatorName: RequestBodyValidator
     iamRoleStatements:
         - Effect: Allow
           Action:
             - dynamodb:UpdateItem
           Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-        - Effect: Allow
-          Action:
-            - xray:PutTelemetryRecords
-            - xray:PutTraceSegments
-          Resources: 
-            - '*' 
-
+  
   # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements
   DeleteTodo:
@@ -189,19 +173,13 @@ functions:
           path: todos/{todoId}
           cors: true
           authorizer: Auth
-    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-delete-to-do-role-todo-${self:provider.stage}     
+          reqValidatorName: RequestBodyValidator
     iamRoleStatements:
         - Effect: Allow
           Action:
             - dynamodb:DeleteItem
           Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-        - Effect: Allow
-          Action:
-            - xray:PutTelemetryRecords
-            - xray:PutTraceSegments
-          Resources: 
-            - '*' 
-
+        
   # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements
   GenerateUploadUrl:
@@ -211,15 +189,18 @@ functions:
           method: post
           path: todos/{todoId}/attachment
           cors: true
-          authorizer: Auth
-    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-s3-upload-to-do-role-todo-${self:provider.stage}     
+          authorizer: 
+            name: Auth
+          reqValidatorName: RequestBodyValidator
     iamRoleStatements:
-        - Effect: Allow
-          Action:
-            - s3:*
-            - xray:PutTelemetryRecords
-            - xray:PutTraceSegments
-          Resource : arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
+      - Effect: Allow
+        Action: 
+          - s3:PutObject
+        Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
           
 
 resources:
@@ -228,6 +209,7 @@ resources:
     TodosTable:
       Type: AWS::DynamoDB::Table
       Properties:
+        TableName: ${self:provider.environment.TODOS_TABLE}
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
@@ -241,16 +223,15 @@ resources:
           - AttributeName: todoId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-        TableName: ${self:provider.environment.TODOS_TABLE}
         LocalSecondaryIndexes:
-         - IndexName: ${self:provider.environment.TODOS_CREATED_AT_INDEX}
-           KeySchema:
-        - AttributeName: userId
-          KeyType: HASH
-        - AttributeName: createdAt
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
+          - IndexName: ${self:provider.environment.TODOS_CREATED_AT_INDEX}
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
     
     # TODO: Complete the bucket properties below. 
     # Do not forget to add the CorsConfiguration propoerty
@@ -260,7 +241,8 @@ resources:
         BucketName: ${self:provider.environment.ATTACHMENT_S3_BUCKET}
         CorsConfiguration:
           CorsRules:
-            - AllowedOrigins:
+            - 
+              AllowedOrigins:
                  - '*'
               AllowedHeaders:
                  - '*'
@@ -274,35 +256,16 @@ resources:
     # Add necessary AWS resources. You will need at least the following AWS resources
     # TODO: Fill the properties
     # Feel free to change the names as you like. 
-    GatewayResponseDefault4XX:
-      Type: AWS::ApiGateway::GatewayResponse
-      Properties:
-        ResponseParameters: 
-          getewayresponse.header.Access-Control_Allow_Origin: "'*'"
-          getewayresponse.header.Access-Control_Allow_Headers: "'*'"
-          getewayresponse.header.Access-Control_Allow_Methods: "'*'"
-        ResponseType: DEFAULT_4XX
-        RestApiId: 
-          Ref: ApiGatewayRestApi
-
-    GatewayResponseDefault5XX:
-      Type: AWS::ApiGateway::GatewayResponse
-      Properties:
-        ResponseParameters: 
-          getewayresponse.header.Access-Control_Allow_Origin: "'*'"
-          getewayresponse.header.Access-Control_Allow_Headers: "'*'"
-          getewayresponse.header.Access-Control_Allow_Methods: "'*'"
-        ResponseType: DEFAULT_5XX
-        RestApiId: 
-          Ref: ApiGatewayRestApi
+    
 
     # TODO: Complete the policy below and attach it to the bucket defined above
     # For cross referencing the name of the bucket, use "!Ref AttachmentsBucket"
     BucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
+        Bucket: !Ref AttachmentsBucket
         PolicyDocument:
-          Id: MyPolicy
+          Id: AttachmentsBucketPolicy
           Version: '2012-10-17'
           Statement:
             - Sid: PublicReadForGetBucketObjects
@@ -310,9 +273,9 @@ resources:
               Principal: '*'
               Action: 's3:GetObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*'
-          Bucket: !Ref AttachmentsBucket
+          #Bucket: !Ref: AttachmentsBucket
     
-     RequestBodyValidator:
+    RequestBodyValidator:
       Type: AWS::ApiGateway::RequestValidator
       Properties:
         Name: 'request-body-validator'

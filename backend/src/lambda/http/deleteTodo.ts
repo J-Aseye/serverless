@@ -13,24 +13,17 @@ export const handler = middy(
     const todoId = event.pathParameters.todoId
     // TODO: Remove a TODO item by id
     const userId: string = getUserId(event)
-    const del = await deleteTodo(userId,todoId)
-
-    logger.info(`Todo item has been successfully deleted;
+    await deleteTodo(userId, todoId)
+    logger.info(`Todo item has been deleted successfully;
     id: ${todoId}`)
+    
     return {
       statusCode: 204,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": true
-      },
-      body: JSON.stringify({
-        del
-      })
+      body: JSON.stringify({})
     }
-  } 
+  }
 )
-    
-  
+
 handler
   .use(httpErrorHandler())
   .use(
