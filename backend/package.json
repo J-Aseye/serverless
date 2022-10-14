@@ -19,6 +19,7 @@
     "@types/aws-lambda": "^8.10.106",
     "@types/jsonwebtoken": "^8.3.2",
     "@types/node": "^16.10.0",
+    "@types/serverless": "^3.12.8",
     "aws-sdk": "^2.433.0",
     "serverless-aws-documentation": "^1.1.0",
     "serverless-iam-roles-per-function": "^3.2.0",

@@ -20,6 +20,9 @@ export const handler = middy(
     id: ${item.todoId}`)
     return {
       statusCode: 201,
+      headers : {
+        "Access-Control-Allow-Origin": "*"
+      },
       body: JSON.stringify( { item} )
     }
   }

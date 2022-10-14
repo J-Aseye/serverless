@@ -106,12 +106,17 @@ functions:
           cors: true
           authorizer: 
             name: Auth
-          reqValidatorName: RequestBodyValidator
+          #reqValidatorName: RequestBodyValidator
     iamRoleStatements:
         - Effect: Allow
           Action:
             - dynamodb:Query
           Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        - Effect: Allow
+          Action:
+            - xray:PutTraceSegments
+          Resource: 
+            - '*'
 
 
   # TODO: Configure this function - 
@@ -138,6 +143,11 @@ functions:
           Action:
             - dynamodb:PutItem
           Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        - Effect: Allow
+          Action:
+            - xray:PutTraceSegments
+          Resource: 
+            - '*'
 
   # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements, and request schemas
@@ -162,6 +172,11 @@ functions:
           Action:
             - dynamodb:UpdateItem
           Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        - Effect: Allow
+          Action:
+            - xray:PutTraceSegments
+          Resource: 
+            - '*'
   
   # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements
@@ -173,12 +188,17 @@ functions:
           path: todos/{todoId}
           cors: true
           authorizer: Auth
-          reqValidatorName: RequestBodyValidator
+          #reqValidatorName: RequestBodyValidator
     iamRoleStatements:
         - Effect: Allow
           Action:
             - dynamodb:DeleteItem
           Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        - Effect: Allow
+          Action:
+            - xray:PutTraceSegments
+          Resource: 
+            - '*'
         
   # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements
@@ -191,20 +211,22 @@ functions:
           cors: true
           authorizer: 
             name: Auth
-          reqValidatorName: RequestBodyValidator
+          #reqValidatorName: RequestBodyValidator
     iamRoleStatements:
       - Effect: Allow
         Action: 
-          - s3:PutObject
+          - s3:*
+          - xray:PutTraceSegments
         Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
-      - Effect: Allow
-        Action:
-          - dynamodb:UpdateItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
           
 
 resources:
   Resources:
+   
+    # Add necessary AWS resources. You will need at least the following AWS resources
+    # TODO: Fill the properties
+    # Feel free to change the names as you like. 
+    
      # TODO: Create a DynamoDB table with local secondary index and a composite key
     TodosTable:
       Type: AWS::DynamoDB::Table
@@ -232,6 +254,14 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
+    onlyBody:
+      Type: "AWS::ApiGateway::RequestValidator"
+      Properties:
+        Name: 'only-body'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
     
     # TODO: Complete the bucket properties below. 
     # Do not forget to add the CorsConfiguration propoerty

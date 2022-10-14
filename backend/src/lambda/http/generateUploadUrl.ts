@@ -16,7 +16,7 @@ async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> =>{
     const uploadURL = await createAttachmentPresignedUrl(userId,todoId);
      
     return{
-      statusCode: 202,
+      statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": true
