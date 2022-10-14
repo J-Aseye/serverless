@@ -11,7 +11,7 @@ async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> =>{
   
     // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
    
-    const todoId = event.pathParameters.todoid;
+    const todoId = event.pathParameters.todoId;
     const userId = getUserId(event)
     const uploadURL = await createAttachmentPresignedUrl(userId,todoId);
      
