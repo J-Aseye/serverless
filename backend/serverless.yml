@@ -74,8 +74,8 @@ custom:
             done:
               type: boolean
 
-package:
-  individually: true
+#package:
+  #individually: true
 
   #logs:
     # Enable API Gateway logs
@@ -213,19 +213,41 @@ functions:
             name: Auth
           #reqValidatorName: RequestBodyValidator
     iamRoleStatements:
-      - Effect: Allow
+        - Effect: Allow
           Action:
             - dynamodb:UpdateItem
           Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-      - Effect: Allow
-        Action: 
-          - s3:*
-          - xray:PutTraceSegments
-        Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
+        - Effect: Allow
+          Action: 
+            - s3:*
+            - xray:PutTraceSegments
+          Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
           
 
 resources:
   Resources:
+  
+    GatewayResponseDefault4XX:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters: 
+          gatewayresponse.header.Access-Control_Allow_Origin: "'*'"
+          gatewayresponse.header.Access-Control_Allow_Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control_Allow_Methods: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId: 
+          Ref: ApiGatewayRestApi
+          
+    GatewayResponseDefault5XX:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters: 
+          gatewayresponse.header.Access-Control_Allow_Origin: "'*'"
+          gatewayresponse.header.Access-Control_Allow_Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control_Allow_Methods: "'*'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: ApiGatewayRestApi
    
     # Add necessary AWS resources. You will need at least the following AWS resources
     # TODO: Fill the properties
@@ -275,8 +297,7 @@ resources:
         BucketName: ${self:provider.environment.ATTACHMENT_S3_BUCKET}
         CorsConfiguration:
           CorsRules:
-            - 
-              AllowedOrigins:
+            - AllowedOrigins:
                  - '*'
               AllowedHeaders:
                  - '*'
