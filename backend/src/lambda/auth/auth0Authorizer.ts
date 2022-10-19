@@ -1,4 +1,9 @@
+<<<<<<< Updated upstream
 import { CustomAuthorizerEvent, CustomAuthorizerResult } from 'aws-lambda'
+=======
+import { CustomAuthorizerEvent , CustomAuthorizerResult } from 'aws-lambda'
+//CustomAuthorizerEvent as APIGatewayAuthorizerEvent
+>>>>>>> Stashed changes
 import 'source-map-support/register'
 
 import { verify, decode } from 'jsonwebtoken'
@@ -13,6 +18,7 @@ const logger = createLogger('auth')
 // to verify JWT token signature.
 // To get this URL you need to go to an Auth0 page -> Show Advanced Settings -> Endpoints -> JSON Web Key Set
 const jwksUrl = 'https://dev-3yftz3lm.us.auth0.com/.well-known/jwks.json'
+
 
 export const handler = async (
   event: CustomAuthorizerEvent
