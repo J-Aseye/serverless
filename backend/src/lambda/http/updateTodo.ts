@@ -4,12 +4,18 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors, httpErrorHandler } from 'middy/middlewares'
 
+<<<<<<< HEAD
 import { updateTodo } from '../../helpers/todos'
 =======
 import { updateTodo } from '../../businessLogic/todos'
 >>>>>>> Stashed changes
+=======
+import { updateTodo } from '../../businessLogic/todos'
+>>>>>>> 04f5a53847c00665964bab72fc275364420fd592
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import { getUserId } from '../utils'
+import { createLogger } from '../../utils/logger'
+const logger = createLogger('updateTodo')
 
 <<<<<<< Updated upstream
 export const handler = middy(
@@ -17,6 +23,7 @@ export const handler = middy(
     const todoId = event.pathParameters.todoId
     const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
     // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
+<<<<<<< HEAD
     const userId: string = getUserId(event)
     const update = await updateTodo(userId,todoId,updatedTodo)
 =======
@@ -33,16 +40,31 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     logger.info(`Todo with id: ${todoId} has been updated successfully`)
 >>>>>>> Stashed changes
+=======
+    const userId = getUserId(event)
+   
+    const toDoItem = await updateTodo(updatedTodo, userId, todoId)
+
+    logger.info(`Todo with id: ${todoId} has been updated successfully`)
+>>>>>>> 04f5a53847c00665964bab72fc275364420fd592
 
 
     return {
-      statusCode: 204,
+      statusCode: 200,
+      headers : {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true
+      },
       body: JSON.stringify({
+<<<<<<< HEAD
 <<<<<<< Updated upstream
         update
+=======
+        "item":toDoItem
+>>>>>>> 04f5a53847c00665964bab72fc275364420fd592
       })
     }
-  } 
+  }
 )
 
 handler
@@ -51,6 +73,7 @@ handler
     cors({
       credentials: true
     })
+<<<<<<< HEAD
   )
 =======
         "item":toDoItem
@@ -58,3 +81,6 @@ handler
     };
   };
 >>>>>>> Stashed changes
+=======
+  )
+>>>>>>> 04f5a53847c00665964bab72fc275364420fd592

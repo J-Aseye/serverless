@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 import { TodosAccess } from './todosAcess'
 import { AttachmentUtils } from './attachmentUtils';
@@ -8,16 +9,36 @@ import { createLogger } from '../utils/logger'
 import * as uuid from 'uuid'
 import * as createError from 'http-errors'
 import {parseUserId} from "../auth/utils"
+=======
+import { TodoItem } from "../models/TodoItem";
+import { UpdateTodoRequest } from "../requests/UpdateTodoRequest";
+import { CreateTodoRequest } from "../requests/CreateTodoRequest";
+import { TodoAccess } from "../dataLayer/todoAccess";
+import { parseUserId } from "../auth/utils";
+import { TodoUpdate } from "../models/TodoUpdate";
+const todoAccess = new TodoAccess();
+>>>>>>> 04f5a53847c00665964bab72fc275364420fd592
 
-// TODO: Implement businessLogic
-//const uuidv4 = require('uuid/v4')
-const toDosAccess = new TodosAccess();
-
-export async function getTodosForUser(jwtToken:string): Promise<TodoItem[]>{
-    const userId = parseUserId(jwtToken);
-    return toDosAccess.getTodosForUser(userId);
+export const deleteTodo = async (userId: string, todoId: string) => {
+    await todoAccess.deleteTodo(userId, todoId);
 }
 
+export const getTodosForUser = async (userId: string): Promise<TodoItem[]> => {
+    const todos = await todoAccess.getUserTodos(userId);
+    return todos;
+}
+
+export const createTodo = async (data: CreateTodoRequest, userId: string): Promise<TodoItem> => {
+    const todoItem = await todoAccess.createTodo(data, userId);
+    return todoItem;
+}
+
+export const updateTodo = async (data: UpdateTodoRequest, todoId: string, jwtToken:string):Promise<TodoUpdate> => {
+    const userId = parseUserId(jwtToken);
+    return todoAccess.updateTodo(data, userId, todoId);
+}
+
+<<<<<<< HEAD
 export function createTodo(createTodoRequest:CreateTodoRequest, jwtToken:string): Promise<TodoItem[]>{
     const userId = parseUserId(jwtToken);
     const todoId = uuid.v4();
@@ -87,10 +108,11 @@ export function updateTodo(updateTodoRequest: UpdateTodoRequest, todoId: string,
 export function generateUploadUrl(userId:string, todoId: string): Promise<string> {
     return todoAccess.generateUploadUrl(userId,todoId);
 >>>>>>> Stashed changes
+=======
+export const createAttachmentPresignedUrl = async (todoId: string) => {
+    return todoAccess.generateUploadUrl(todoId);
+>>>>>>> 04f5a53847c00665964bab72fc275364420fd592
 }
-
-
-
 
 
 
