@@ -14,30 +14,45 @@ import { TodoItem } from "../models/TodoItem";
 import { UpdateTodoRequest } from "../requests/UpdateTodoRequest";
 import { CreateTodoRequest } from "../requests/CreateTodoRequest";
 import { TodoAccess } from "../dataLayer/todoAccess";
-import { parseUserId } from "../auth/utils";
 import { TodoUpdate } from "../models/TodoUpdate";
+
+const uuidv4 = require('uuid/v4')
 const todoAccess = new TodoAccess();
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
 
-export const deleteTodo = async (userId: string, todoId: string) => {
-    await todoAccess.deleteTodo(userId, todoId);
+
+export function deleteTodo(todoId: string, userId: string): Promise<string> {
+    //const userId = parseUserId(jwtToken);
+    return todoAccess.deleteTodo(todoId, userId);
 }
 
-export const getTodosForUser = async (userId: string): Promise<TodoItem[]> => {
+export async function getTodosForUser(userId: string): Promise<TodoItem[]> {
+   // const userId = parseUserId(jwtToken);
     const todos = await todoAccess.getUserTodos(userId);
     return todos;
 }
 
-export const createTodo = async (data: CreateTodoRequest, userId: string): Promise<TodoItem> => {
-    const todoItem = await todoAccess.createTodo(data, userId);
-    return todoItem;
+export function createTodo(createTodoRequest: CreateTodoRequest, userId: string): Promise<TodoItem> {
+    //const userId = parseUserId(jwtToken);
+    const todoId = uuidv4();
+    const s3Bucket = process.env.ATTACHMENT_S3_BUCKET;
+
+    return todoAccess.createTodo({
+     userId: userId,
+     todoId: todoId,
+     attachmentUrl: `https://${s3Bucket}.s3.amazonaws.com/${todoId}`,
+     createdAt: new Date().getTime().toString(),
+     done: false,
+     ...createTodoRequest,
+    });
 }
 
-export const updateTodo = async (data: UpdateTodoRequest, todoId: string, jwtToken:string):Promise<TodoUpdate> => {
-    const userId = parseUserId(jwtToken);
-    return todoAccess.updateTodo(data, userId, todoId);
+export function updateTodo(updateTodoRequest: UpdateTodoRequest, todoId: string, userId:string):Promise<TodoUpdate> {
+    //const userId = parseUserId(jwtToken);
+    return todoAccess.updateTodo(updateTodoRequest, todoId, userId);
 }
 
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 export function createTodo(createTodoRequest:CreateTodoRequest, jwtToken:string): Promise<TodoItem[]>{
     const userId = parseUserId(jwtToken);
@@ -112,6 +127,10 @@ export function generateUploadUrl(userId:string, todoId: string): Promise<string
 export const createAttachmentPresignedUrl = async (todoId: string) => {
     return todoAccess.generateUploadUrl(todoId);
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+export function generateUploadUrl(userId:string, todoId: string): Promise<string> {
+    return todoAccess.generateUploadUrl(userId,todoId);
+>>>>>>> Stashed changes
 }
 
 

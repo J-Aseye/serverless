@@ -1,4 +1,5 @@
 import 'source-map-support/register'
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <<<<<<< Updated upstream
 
@@ -19,6 +20,11 @@ import { deleteTodo } from '../../helpers/todos'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors, httpErrorHandler } from 'middy/middlewares'
+=======
+import { APIGatewayProxyHandler,APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
+//import * as middy from 'middy'
+//import { cors, httpErrorHandler } from 'middy/middlewares'
+>>>>>>> Stashed changes
 import { deleteTodo } from '../../businessLogic/todos'
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
 import { getUserId } from '../utils'
@@ -34,8 +40,14 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     
     // TODO: Remove a TODO item by id
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     const userId: string = getUserId(event)
     await deleteTodo(userId, todoId)
+=======
+    //const userId: string = getUserId(event)
+    const deleteData = await deleteTodo(todoId, userId);
+
+>>>>>>> Stashed changes
     logger.info(`Todo item has been deleted successfully;
     id: ${todoId}`)
     
@@ -44,8 +56,9 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       headers : {
         "Access-Control-Allow-Origin": "*"
       },
-      body: JSON.stringify({})
+      body: deleteData,
     }
+<<<<<<< Updated upstream
   }
 )
 
@@ -70,5 +83,8 @@ handler
       },
       body: deleteData,
     }
+  };
+>>>>>>> Stashed changes
+=======
   };
 >>>>>>> Stashed changes

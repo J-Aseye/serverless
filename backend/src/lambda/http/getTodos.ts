@@ -3,6 +3,7 @@ import { getUserId } from '../utils'
 import { APIGatewayProxyHandler,APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 //import * as middy from 'middy'
 //import { cors } from 'middy/middlewares'
+<<<<<<< Updated upstream
 
 <<<<<<< HEAD
 <<<<<<< Updated upstream
@@ -16,6 +17,11 @@ import { getTodosForUser as getTodosForUser } from '../../businessLogic/todos'
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
 import { getUserId } from '../utils';
 =======
+import { getTodosForUser as getTodosForUser } from '../../businessLogic/todos'
+//import { getUserId } from '../utils';
+>>>>>>> Stashed changes
+=======
+
 import { getTodosForUser as getTodosForUser } from '../../businessLogic/todos'
 //import { getUserId } from '../utils';
 >>>>>>> Stashed changes

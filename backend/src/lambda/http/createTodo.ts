@@ -11,6 +11,7 @@ const logger = createLogger('createTodo')
 
 export const handler = 
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <<<<<<< Updated upstream
     const authorization = event.headers.Authorization;
@@ -26,6 +27,9 @@ export const handler =
 <<<<<<< HEAD
 =======
 
+=======
+
+>>>>>>> Stashed changes
     console.log("Processing Event", event)
     const userId = getUserId(event)
     const newTodo: CreateTodoRequest = JSON.parse(event.body);
@@ -33,6 +37,7 @@ export const handler =
     // TODO: Implement creating a new TODO item
     const toDoItem = await createTodo(newTodo, userId)
 
+<<<<<<< Updated upstream
     logger.info(`Todo item created;
     id: ${toDoItem.todoId}`)
     
@@ -42,11 +47,17 @@ export const handler =
     logger.info(`Todo item created;
     id: ${item.todoId}`)
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+    logger.info(`Todo item created;
+    id: ${toDoItem.todoId}`)
+    
+>>>>>>> Stashed changes
     return {
       statusCode: 201,
       headers : {
         "Access-Control-Allow-Origin": "*"
       },
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <<<<<<< Updated upstream
       body: JSON.stringify({
@@ -58,6 +69,14 @@ export const handler =
     }
   }
 )
+=======
+      body: JSON.stringify( {
+         "item":toDoItem
+        } ),
+    }
+  };
+
+>>>>>>> Stashed changes
 =======
       body: JSON.stringify( {
          "item":toDoItem

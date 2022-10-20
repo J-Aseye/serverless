@@ -104,6 +104,7 @@ functions:
           method: get
           path: todos
           cors: true
+<<<<<<< Updated upstream
 <<<<<<< HEAD
           authorizer: Auth
 <<<<<<< Updated upstream
@@ -117,6 +118,11 @@ functions:
             name: Auth
           #reqValidatorName: RequestBodyValidator
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+          authorizer: Auth
+          #reqValidatorName: RequestBodyValidator
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-get-to-do-role-${self:provider.stage}
+>>>>>>> Stashed changes
     iamRoleStatements:
         - Effect: Allow
           Action:
@@ -141,6 +147,7 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <<<<<<< Updated upstream
           documentation: 
@@ -151,6 +158,8 @@ functions:
           reqValidatorName: RequestBodyValidator
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-to-do-role-todo-${self:provider.stage}     
 =======
+=======
+>>>>>>> Stashed changes
           documentation:
             summary: "Create a new todo item"
             description: "Create a new todo item"
@@ -158,6 +167,7 @@ functions:
                "application/json": CreateTodoRequest
           reqValidatorName: RequestBodyValidator
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-to-do-role-${self:provider.stage} 
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
 =======
           request:
@@ -168,6 +178,8 @@ functions:
                 description: 'Create ToDo Validation'
           reqValidatorName: RequestBodyValidator 
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+>>>>>>> Stashed changes
     iamRoleStatements:
         - Effect: Allow
           Action:
@@ -188,6 +200,7 @@ functions:
           method: patch
           path: todos/{todoId}
           cors: true
+<<<<<<< Updated upstream
 <<<<<<< HEAD
           authorizer: Auth
 <<<<<<< Updated upstream
@@ -199,11 +212,15 @@ functions:
           reqValidatorName: RequestBodyValidator
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-to-do-role-todo-${self:provider.stage}     
 =======
+=======
+          authorizer: Auth
+>>>>>>> Stashed changes
           documentation:
             summary: "Update a todo item"
             description: "Update a todo item"
             requestModels:
                "application/json": UpdateTodoRequest
+<<<<<<< Updated upstream
           reqValidatorName: RequestBodyValidator
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-to-do-role-${self:provider.stage}
 >>>>>>> Stashed changes
@@ -218,6 +235,10 @@ functions:
                 description: 'Update ToDo Validation'
           reqValidatorName: RequestBodyValidator
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+          reqValidatorName: RequestBodyValidator
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-to-do-role-${self:provider.stage}
+>>>>>>> Stashed changes
     iamRoleStatements:
         - Effect: Allow
           Action:
@@ -245,10 +266,13 @@ functions:
 =======
           #reqValidatorName: RequestBodyValidator
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-delete-to-do-role-${self:provider.stage}
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
 =======
           #reqValidatorName: RequestBodyValidator
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+>>>>>>> Stashed changes
     iamRoleStatements:
         - Effect: Allow
           Action:
@@ -269,6 +293,7 @@ functions:
           method: post
           path: todos/{todoId}/attachment
           cors: true
+<<<<<<< Updated upstream
 <<<<<<< HEAD
           authorizer: Auth
 <<<<<<< Updated upstream
@@ -282,6 +307,11 @@ functions:
             name: Auth
           #reqValidatorName: RequestBodyValidator
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+          authorizer: Auth
+          #reqValidatorName: RequestBodyValidator
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-s3-upload-role-${self:provider.stage}
+>>>>>>> Stashed changes
     iamRoleStatements:
         - Effect: Allow
           Action:

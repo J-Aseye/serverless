@@ -4,10 +4,13 @@ import { CustomAuthorizerEvent, CustomAuthorizerResult } from 'aws-lambda'
 =======
 import { CustomAuthorizerEvent , CustomAuthorizerResult } from 'aws-lambda'
 //CustomAuthorizerEvent as APIGatewayAuthorizerEvent
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
 =======
 import { CustomAuthorizerEvent , CustomAuthorizerResult } from 'aws-lambda'
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+>>>>>>> Stashed changes
 import 'source-map-support/register'
 
 import { verify, decode } from 'jsonwebtoken'

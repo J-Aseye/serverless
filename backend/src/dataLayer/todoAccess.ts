@@ -1,5 +1,6 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import * as AWS from "aws-sdk";
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 //import { CreateTodoRequest } from "../requests/CreateTodoRequest";
 //import { UpdateTodoRequest } from "../requests/UpdateTodoRequest";
@@ -11,6 +12,12 @@ import { CreateTodoRequest } from "../requests/CreateTodoRequest";
 import { TodoItem } from "../models/TodoItem";
 import { v4 } from "uuid";
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+//import { CreateTodoRequest } from "../requests/CreateTodoRequest";
+//import { UpdateTodoRequest } from "../requests/UpdateTodoRequest";
+import { TodoItem } from "../models/TodoItem";
+//
+>>>>>>> Stashed changes
 import { TodoUpdate } from "../models/TodoUpdate";
 
 
@@ -26,12 +33,16 @@ export class TodoAccess {
       private readonly urlExpiration: number = +process.env.SIGNED_URL_EXPIRATION
   ) {}
 
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
   async deleteTodo(userId: string, todoId: string): Promise<string> {
       console.log("Deleting todo")
 
       const params = {
         TableName: this.todosTable,
+<<<<<<< Updated upstream
           Key: {
               "userId": userId,
               "todoId": todoId
@@ -51,6 +62,17 @@ export class TodoAccess {
           }
       }).promise();
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+          Key: {
+              "userId": userId,
+              "todoId": todoId
+      },
+      
+          };
+          const result = await this.docClient.delete(params).promise();
+          console.log(result);
+          return "" as string;
+>>>>>>> Stashed changes
   }
 
   async getUserTodos(userId: string): Promise<TodoItem[]> {
@@ -65,6 +87,7 @@ export class TodoAccess {
       return todos as TodoItem[];
   }
 
+<<<<<<< Updated upstream
 <<<<<<< HEAD
   async createTodo(todoItem: TodoItem): Promise<TodoItem> {
       console.log("Creating new todo")
@@ -77,29 +100,35 @@ export class TodoAccess {
       const result = await this.docClient.put(params).promise();
 =======
   async createTodo(data: CreateTodoRequest, userId: string) {
+=======
+  async createTodo(todoItem: TodoItem): Promise<TodoItem> {
+>>>>>>> Stashed changes
       console.log("Creating new todo")
       
-      const todoItem: TodoItem = {
-          todoId: v4(),
-          createdAt: new Date().toISOString(),
-          done: false,
-          userId,
-          ...data
-      }
-      const result = await this.docClient.put({
-          TableName: this.todosTable,
+      const params = {
+        TableName: this.todosTable,
           Item: todoItem
+<<<<<<< Updated upstream
       }).promise();
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+      };
+
+      const result = await this.docClient.put(params).promise();
+>>>>>>> Stashed changes
       console.log(result);
       return todoItem as TodoItem;
   }
 
+<<<<<<< Updated upstream
 <<<<<<< HEAD
   async updateTodo(todoUpdate: TodoUpdate, userId: string, todoId: string):Promise<TodoUpdate> {
 =======
   async updateTodo(data: TodoUpdate, userId: string, todoId: string):Promise<TodoUpdate> {
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+  async updateTodo(todoUpdate: TodoUpdate, userId: string, todoId: string):Promise<TodoUpdate> {
+>>>>>>> Stashed changes
     console.log("Updating a todo item")
 
     const params =  {
@@ -115,6 +144,7 @@ export class TodoAccess {
             "#done": "done"
         },
           ExpressionAttributeValues: {
+<<<<<<< Updated upstream
 <<<<<<< HEAD
               ":name": todoUpdate['name'],
               ":dueDate": todoUpdate['dueDate'],
@@ -124,6 +154,11 @@ export class TodoAccess {
               ":dueDate": data['dueDate'],
               ":done": data['done']
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+              ":name": todoUpdate['name'],
+              ":dueDate": todoUpdate['dueDate'],
+              ":done": todoUpdate['done']
+>>>>>>> Stashed changes
           },
          
           ReturnValues: "ALL_NEW"
@@ -136,6 +171,7 @@ export class TodoAccess {
       
   }
 
+<<<<<<< Updated upstream
 <<<<<<< HEAD
   async generateUploadUrl(userId, todoId: string): Promise<string> {
       const url = this.s3Client.getSignedUrl('putObject',{
@@ -154,15 +190,25 @@ export class TodoAccess {
 };
 =======
   async generateUploadUrl(todoId: string): Promise<string> {
+=======
+  async generateUploadUrl(userId, todoId: string): Promise<string> {
+>>>>>>> Stashed changes
       const url = this.s3Client.getSignedUrl('putObject',{
         Bucket: this.s3Bucket,
-        Key: todoId,
+        Key: {
+          "userId": userId,
+          "todoId": todoId
+         },
         Expires: this.urlExpiration
       });
 
-    console.log(url)
+    console.log(url);
       return url as string;
        
   }
+<<<<<<< Updated upstream
 }
 >>>>>>> 04f5a53847c00665964bab72fc275364420fd592
+=======
+};
+>>>>>>> Stashed changes
