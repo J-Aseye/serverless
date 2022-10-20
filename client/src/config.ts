@@ -1,17 +1,5 @@
 // TODO: Once your application is deployed, copy an API id here so that the frontend could interact with it
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-const apiId = '...'
-=======
 const apiId = '9bro71zlye'
->>>>>>> Stashed changes
-=======
-const apiId = 't2tt2uf483'
->>>>>>> 04f5a53847c00665964bab72fc275364420fd592
-=======
-const apiId = '9bro71zlye'
->>>>>>> Stashed changes
 export const apiEndpoint = `https://${apiId}.execute-api.us-east-1.amazonaws.com/dev`
 
 export const authConfig = {
