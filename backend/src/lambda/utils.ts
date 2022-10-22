@@ -1,3 +1,4 @@
+/** 
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { parseUserId } from "../auth/utils";
 
@@ -7,6 +8,8 @@ import { parseUserId } from "../auth/utils";
  *
  * @returns a user id from a JWT token
  */
+
+ /** 
 export function getUserId(event: APIGatewayProxyEvent): string {
   const authorization = event.headers.Authorization
   const split = authorization.split(' ')
@@ -14,3 +17,4 @@ export function getUserId(event: APIGatewayProxyEvent): string {
 
   return parseUserId(jwtToken)
 }
+**/

@@ -6,13 +6,13 @@ import { TodoUpdate } from "../models/TodoUpdate"
 
 
 
-const AWSXRay = require("aws-xray-sdk");
-const XAWS = AWSXRay.captureAWS(AWS);
+//const AWSXRay = require("aws-xray-sdk");
+//const XAWS = AWSXRay.captureAWS(AWS);
 
 export class TodoAccess {
   constructor(
-      private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
-      private readonly s3Client:Types = new XAWS.S3({ signatureVersion: "v4" }),
+      private readonly docClient: DocumentClient = new AWS.DynamoDB.DocumentClient(),
+      private readonly s3Client: Types = new AWS.S3({ signatureVersion: "v4" }),
       private readonly todosTable: string = process.env.TODOS_TABLE,
       private readonly s3Bucket: string = process.env.ATTACHMENT_S3_BUCKET,
   ) {}
@@ -38,14 +38,10 @@ export class TodoAccess {
 
       const params = {
         TableName: this.todosTable,
-        KeyConditionExpression: "#userId = :userId",
-        ExpressionAttributeNames: {
-          "#userId": ":userId"
-        },
-          ExpressionAttributeValues: {
-              ":userId": userId
-      }
-      
+            KeyConditionExpression: 'userId = :userId',
+            ExpressionAttributeValues: {
+                ':userId': userId
+            }  
    };
 
       const result = await this.docClient.query(params).promise();
@@ -102,15 +98,12 @@ export class TodoAccess {
   }
 
 
-  async generateUploadUrl(userId, todoId: string): Promise<string> {
-      console.log("Generating image url");
+  async generateUploadUrl(todoId: string): Promise<string> {
+    console.log("Generating image url");
        
       const url = this.s3Client.getSignedUrl('putObject',{
         Bucket: this.s3Bucket,
-        Key: {
-          "userId": userId,
-          "todoId": todoId
-         },
+        Key: todoId,
         Expires: 1000,
       });
 
@@ -118,5 +111,5 @@ export class TodoAccess {
       return url as string;
        
   }
+}
 
-};

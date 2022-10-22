@@ -3,16 +3,19 @@ org: jaseye
 app: serverless-todo
 service: serverless-todo
 
+disabledDeprecations:
+  - '*'
+
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
-  - serverless-plugin-tracing
+  #- serverless-plugin-tracing
   - serverless-aws-documentation
   - serverless-reqvalidator-plugin
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs16.x
   #lambdaHashingVersion: '20201221'
   memorySize: 3008
 
@@ -213,10 +216,6 @@ functions:
           #reqValidatorName: RequestBodyValidator
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-s3-upload-role-${self:provider.stage}
     iamRoleStatements:
-        - Effect: Allow
-          Action:
-            - dynamodb:UpdateItem
-          Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
         - Effect: Allow
           Action: 
             - s3:*

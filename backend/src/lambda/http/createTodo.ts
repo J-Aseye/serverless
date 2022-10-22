@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler, APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import 'source-map-support/register'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
-import { getUserId } from '../utils';
+//import { getUserId } from '../utils';
 import { createTodo } from '../../businessLogic/todos';
 import { createLogger } from '../../utils/logger'
 
@@ -11,11 +11,15 @@ export const handler:APIGatewayProxyHandler = async (event: APIGatewayProxyEvent
      
     console.log("Processing Event", event);
     // TODO: Implement creating a new TODO item
-    const userId = getUserId(event)
+    //const userId = getUserId(event)
     // TODO: Implement creating a new TODO item
+    const authorization = event.headers.Authorization;
+    const split = authorization.split('');
+    const jwtToken = split[1];
+
     const newTodo: CreateTodoRequest = JSON.parse(event.body)
 
-    const toDoItem = await createTodo(newTodo, userId)
+    const toDoItem = await createTodo(newTodo, jwtToken)
 
     logger.info(`Todo item created;
     id: ${toDoItem.todoId}`)
